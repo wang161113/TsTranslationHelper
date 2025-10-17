@@ -1,6 +1,14 @@
-# TS文件翻译工具
+# TS文件翻译工具 (TsTranslationHelper)
 
-基于Argos Translate的本地TS文件翻译工具，支持单文件翻译和批量翻译，无需API密钥和网络连接。
+基于Argos Translate的本地TS文件翻译工具，支持单文件翻译和批量翻译，无需API密钥和网络连接。提供图形界面和命令行两种使用方式，支持Windows、Linux和macOS平台。
+
+## 🚀 最新特性
+
+- ✅ **窗口居中显示**: 应用启动时自动居中显示
+- ✅ **应用图标**: 添加了专业的应用图标
+- ✅ **一键打包**: 支持打包成独立的exe文件
+- ✅ **多语言界面**: 支持中英文界面切换
+- ✅ **现代化UI**: 采用QSS样式美化界面
 
 ## 功能特性
 
@@ -142,10 +150,21 @@ TsTranslationHelper/
 ├── main.py                 # 主翻译程序
 ├── batch_translator.py     # 批量翻译工具
 ├── gui_app.py             # 图形界面应用
+├── install_translation_package.py  # 翻译包安装工具
 ├── requirements.txt        # 依赖包列表
 ├── README.md              # 项目说明文档
 ├── example_en.ts          # 示例TS文件
-└── start_gui.bat          # Windows启动脚本
+├── example_en_zh.ts       # 示例翻译结果文件
+├── start_gui.bat          # Windows启动脚本
+├── build_exe.bat          # 打包脚本
+├── app_icon.ico           # 应用图标
+├── styles.qss             # 界面样式文件
+├── TsTranslationHelper.spec  # PyInstaller配置文件
+├── build/                 # 打包临时文件
+├── dist/                  # 打包输出目录
+│   └── TsTranslationHelper.exe  # 打包后的可执行文件
+└── test_ts/              # 测试文件目录
+    └── deskflow_zh_CN.ts  # 测试TS文件
 ```
 
 ## 核心类说明
@@ -172,6 +191,50 @@ TsTranslationHelper/
 - 翻译包管理界面
 - 实时进度显示
 
+## 📦 打包说明
+
+### 打包成独立exe文件
+
+项目支持打包成独立的可执行文件，无需Python环境即可运行。
+
+#### 使用打包脚本（推荐）
+
+```bash
+# 运行打包脚本
+build_exe.bat
+```
+
+打包脚本会自动：
+- 检查并激活虚拟环境
+- 安装PyInstaller（如果未安装）
+- 清理旧的构建文件
+- 执行打包命令
+- 测试运行打包后的程序
+
+#### 手动打包
+
+```bash
+# 安装PyInstaller
+pip install pyinstaller
+
+# 执行打包
+pyinstaller --onefile --windowed --name TsTranslationHelper --icon=app_icon.ico --add-data "styles.qss;." gui_app.py
+```
+
+#### 打包后的文件
+
+打包完成后，在 `dist/` 目录下会生成：
+- `TsTranslationHelper.exe` - 主程序文件
+- 文件大小约100-200MB（包含Python解释器和所有依赖）
+
+### 打包特性
+
+- ✅ **独立运行**: 无需Python环境
+- ✅ **跨机器运行**: 可在任何Windows电脑上运行
+- ✅ **包含翻译模型**: 打包时包含已安装的翻译包
+- ✅ **界面美化**: 包含QSS样式文件
+- ✅ **应用图标**: 显示专业应用图标
+
 ## 常见问题
 
 ### Q: 翻译速度慢怎么办？
@@ -194,9 +257,72 @@ argospm install <包名>     # 安装包
 ### Q: 批量翻译时内存不足？
 A: 可以分批处理文件，或使用命令行工具分多次运行。
 
-## 开发说明
+### Q: 打包后的exe文件很大？
+A: 这是正常的，因为包含了Python解释器和所有依赖库。可以使用UPX压缩工具进一步减小体积。
+
+### Q: 如何更换应用图标？
+A: 替换项目根目录下的 `app_icon.ico` 文件即可，支持多种尺寸的ICO格式。
+
+### Q: 窗口不居中显示？
+A: 确保已安装最新版本，窗口启动时会自动计算屏幕尺寸并居中显示。
+
+## 🛠️ 开发说明
+
+### 环境设置
+
+```bash
+# 创建虚拟环境
+python -m venv .venv
+
+# 激活虚拟环境（Windows）
+.venv\Scripts\activate
+
+# 安装依赖
+pip install -r requirements.txt
+```
+
+### 代码结构
+
+```python
+# 主要类说明
+- TranslationApp: 主窗口类，负责界面布局和事件处理
+- TsTranslator: 翻译器类，负责翻译逻辑
+- BatchTranslator: 批量翻译器类
+- TranslationThread: 翻译线程类，用于后台执行
+```
 
 ### 扩展新的翻译引擎
+
+要添加新的翻译引擎，需要实现以下接口：
+
+```python
+class TranslationEngine:
+    def translate_text(self, text: str, source_lang: str, target_lang: str) -> str:
+        """翻译单个文本"""
+        pass
+    
+    def translate_ts_file(self, input_file: str, output_file: str, 
+                        source_lang: str, target_lang: str, 
+                        skip_translated: bool = True) -> dict:
+        """翻译TS文件"""
+        pass
+```
+
+### 界面定制
+
+项目使用QSS样式文件进行界面美化，可以修改 `styles.qss` 来自定义界面外观。
+
+## 📄 许可证
+
+本项目基于MIT许可证开源，可自由使用和修改。
+
+## 🤝 贡献
+
+欢迎提交Issue和Pull Request来改进项目。
+
+## 📞 联系方式
+
+如有问题或建议，请通过GitHub Issues提交。
 
 项目设计支持扩展其他翻译引擎：
 
