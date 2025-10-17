@@ -1,0 +1,9 @@
+argostranslate>=1.9.1
+pandas>=1.5.0
+lxml>=4.9.0
+PyQt5>=5.15.0
+PyQt5-sip>=12.0.0
+pathlib2>=2.3.0; python_version < "3.4"
+requests>=2.25.0
+chardet>=4.0.0
+certifi>=2020.12.5
